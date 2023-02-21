@@ -161,3 +161,5 @@ where address like'대한민국%' and name not in(select name from customer wher
 select name
 from customer
 where address like '대한민국%' and name in (select name from customer where custid in(select custid from orders));
+
+-- ne
