@@ -82,7 +82,7 @@ CREATE PROCEDURE `학과_입력_수정` (
 BEGIN
 	-- 입력 시 학과가 있는 경우는 업데이트로 하고 없는 경우에 입력이 되도록
     declare cnt int; -- 지역 변수 선언 
-    select count(*) into cnt from 학과 where 학과번호=my학과번호;
+    select count(*) into cnt from 학과 where 학과번호=my학과번호; -- 조건절 의미? 학과번호와 파라미터로 전달할 my학과번호가 일치하는 데이터 대상으로 count(*)수행
     if (cnt=0) then
 		insert into 학과 values(학과번호, 학과명, 전화번호);
      else
@@ -143,7 +143,7 @@ SELECT @수강자수 as 수강자수;
 use db0221;
 delimiter //
 CREATE PROCEDURE `새수강신청` (
-    in p학번 char(7),
+    in p학번 char(7), -- 파라미터
 	out p수강신청번호 Int
 )
 BEGIN
@@ -154,7 +154,7 @@ END;
 //
 delimiter ;
 
--- 커서 프로시저 -- 다시 복붙해볼 것
+-- 커서 프로시저 
 delimiter //
 CREATE PROCEDURE Interest()
 BEGIN

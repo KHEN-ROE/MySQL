@@ -41,21 +41,59 @@ SELECT * FROM 상품;
 -- 삽입 삭제 와 재고를 연동시킨다. 입고수량이 변화하면 상품정보의 재고수량에 반영.
 -- 판매되면 판매수량 만큼 재고의 변화생겨야함
 
-create table deal_log( -- 필요 없는듯
-l상품코드 varchar(6),
-l상품명 varchar(30),
-l제조사 varchar(30),
-l소비자가격 int,
-l재고수량 int
-);
 
 delimiter //
-create trigger AfterInsert
+create trigger wheninput
 After insert on 입고 for each row
 begin
+	update 상품
+    set 재고수량 = 재고수량 + new.입고수량
+    where 상품코드 = new.상품코드;
+end;
+//
+delimiter ;
 
-insert into deal_log values(new.상품코드, new.상품명, new.제조사, new.소비자가격);
+insert into 입고(입고번호, 상품코드, 입고일자, 입고수량, 입고단가) values(5, 'CCCCCC', '2023-03-06', 1, 5000);
+select *
+from 입고;
 
+select *
+from 상품;
+
+delimiter //
+create trigger whenoutput
+after insert on 판매 for each row
+begin
+	update 상품
+	set 재고수량 = 재고수량 - new.판매수량
+	where 상품코드 = new.상품코드;
+end;
+//
+delimiter ;
+
+insert into 판매(판매번호, 상품코드, 판매일자, 판매수량, 판매단가) values(2, 'CCCCCC', '2023-03-06', 1, 10000);
+select * from 판매;
+select * from 상품;
+
+-- 방금한거 안보고 다시 쳐보기
+delimiter //
+create trigger input1
+after insert on 입고 for each row
+begin
+	update 상품
+    set 재고수량 = 재고수량 + new.입고수량
+    where 상품코드 = new.상품코드;
+end;
+// 
+delimiter ;
+
+delimiter //
+create trigger output1
+after insert on 판매 for each row
+begin
+	update 상품 -- 상품 테이블을 업데이트 할껀데
+	set 재고수량 = 재고수량 - new.판매수량 -- 상품테이블의 재고수량 필드를 이렇게 바꾸겠다.
+    where 상품코드 = new.상품코드; -- 어떤 조건일 때? 테이블의 상품코드와 새로 삽입된 상품코드가 같으면
 end;
 //
 delimiter ;
