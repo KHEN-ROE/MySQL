@@ -55,13 +55,19 @@ SELECT * FROM Book; -- 15번 투플 가격 변경 확인
 use db0221;
 delimiter //
 create procedure 새학과(
+<<<<<<< HEAD
 	in my학과번호 char(2), -- 매개변수임. 매개변수명은 컬럼명과 다르게 작성해야함
     in my학과명 char(20),
     in my전화번호  char(20)
+=======
+	in 새학과번호 char(2),
+    in 새학과명 char(20),
+    in 새전화번호  char(20)
+>>>>>>> 015d497dd24c8cd4ba636e114d5df5184160a7c7
 )
 begin
 	insert into 학과(학과번호, 학과명, 전화번호)
-	values(my학과번호, my학과명, my전화번호);
+	values(새학과번호, 새학과명, 새전화번호);
 end;
 //
 delimiter ;
