@@ -1,142 +1,92 @@
-CREATE DATABASE  IF NOT EXISTS `db0309` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `db0309`;
--- MySQL dump 10.13  Distrib 8.0.32, for Win64 (x86_64)
---
--- Host: localhost    Database: db0309
--- ------------------------------------------------------
--- Server version	8.0.32
+-- MySQL Workbench Forward Engineering
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
---
--- Table structure for table `거래정보`
---
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema db0309
+-- -----------------------------------------------------
 
-DROP TABLE IF EXISTS `거래정보`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `거래정보` (
-  `제품번호` varchar(45) NOT NULL,
-  `품명` varchar(45) DEFAULT NULL,
-  `규격` varchar(15) DEFAULT NULL,
-  `수량` int DEFAULT NULL,
-  `단가` int DEFAULT NULL,
-  PRIMARY KEY (`제품번호`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- -----------------------------------------------------
+-- Schema db0309
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `db0309` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `db0309` ;
 
---
--- Dumping data for table `거래정보`
---
+-- -----------------------------------------------------
+-- Table `db0309`.`상품`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `db0309`.`상품` (
+  `품명` INT NOT NULL,
+  `규격` VARCHAR(45) NULL,
+  `단가` VARCHAR(45) NULL,
+  PRIMARY KEY (`품명`))
+ENGINE = InnoDB;
 
-LOCK TABLES `거래정보` WRITE;
-/*!40000 ALTER TABLE `거래정보` DISABLE KEYS */;
-INSERT INTO `거래정보` VALUES ('1','aa','a',1,1000);
-/*!40000 ALTER TABLE `거래정보` ENABLE KEYS */;
-UNLOCK TABLES;
 
---
--- Table structure for table `견적서`
---
+-- -----------------------------------------------------
+-- Table `db0309`.`견적상세`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `db0309`.`견적상세` (
+  `제품번호` INT NOT NULL,
+  `수량` VARCHAR(45) NULL,
+  `견적번호` VARCHAR(45) NULL,
+  `품명` VARCHAR(45) NULL,
+  `상품_품명` INT NOT NULL,
+  PRIMARY KEY (`제품번호`, `상품.품명`),
+  INDEX `fk_견적상세_상품1_idx` (`상품_품명` ASC),
+  CONSTRAINT `fk_견적상세_상품1`
+    FOREIGN KEY (`상품_품명`)
+    REFERENCES `db0309`.`상품` (`품명`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
-DROP TABLE IF EXISTS `견적서`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `견적서` (
-  `견적서번호` varchar(45) NOT NULL,
-  `견적날짜` date DEFAULT NULL,
-  `공급자번호` int DEFAULT NULL,
-  `견적접수자` int DEFAULT NULL,
-  `제품번호` int DEFAULT NULL,
-  `공급가액` int DEFAULT NULL,
-  `비고` varchar(45) DEFAULT NULL,
+
+-- -----------------------------------------------------
+-- Table `db0309`.`견적서`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `db0309`.`견적서` (
+  `견적서번호` INT NOT NULL,
+  `견적날짜` VARCHAR(45) NULL,
+  `공급자번호` VARCHAR(45) NULL,
+  `견적접수자` VARCHAR(45) NULL,
+  `제품번호` VARCHAR(45) NULL,
+  `공급가액` VARCHAR(45) NULL,
+  `비고` VARCHAR(45) NULL,
   PRIMARY KEY (`견적서번호`),
-  KEY `fk_견적서_거래정보_idx` (`제품번호`),
-  KEY `fk_견적서_공급자1_idx` (`공급자번호`),
-  KEY `fk_견적서_사원1_idx` (`견적접수자`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  CONSTRAINT `fk_견적서_table41`
+    FOREIGN KEY (`견적서번호`)
+    REFERENCES `db0309`.`견적상세` (`견적번호`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
---
--- Dumping data for table `견적서`
---
 
-LOCK TABLES `견적서` WRITE;
-/*!40000 ALTER TABLE `견적서` DISABLE KEYS */;
-INSERT INTO `견적서` VALUES ('1','2023-03-09',1,1,1,1000,NULL);
-/*!40000 ALTER TABLE `견적서` ENABLE KEYS */;
-UNLOCK TABLES;
+-- -----------------------------------------------------
+-- Table `db0309`.`공급자`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `db0309`.`공급자` (
+  `등록번호` INT NOT NULL,
+  `상호` VARCHAR(45) NULL,
+  `대표자성명` VARCHAR(45) NULL,
+  `사업장주소` VARCHAR(45) NULL,
+  `업태` VARCHAR(45) NULL,
+  `종목` VARCHAR(45) NULL,
+  `전화번호` VARCHAR(45) NULL,
+  PRIMARY KEY (`등록번호`),
+  CONSTRAINT `fk_공급자_견적서`
+    FOREIGN KEY (`등록번호`)
+    REFERENCES `db0309`.`견적서` (`공급자번호`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
---
--- Table structure for table `공급자`
---
 
-DROP TABLE IF EXISTS `공급자`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `공급자` (
-  `등록번호` int NOT NULL,
-  `상호` varchar(45) DEFAULT NULL,
-  `대표성명` varchar(45) DEFAULT NULL,
-  `사업장주소` varchar(45) DEFAULT NULL,
-  `업태` varchar(45) DEFAULT NULL,
-  `종목` varchar(45) DEFAULT NULL,
-  `전화번호` int DEFAULT NULL,
-  PRIMARY KEY (`등록번호`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `공급자`
---
-
-LOCK TABLES `공급자` WRITE;
-/*!40000 ALTER TABLE `공급자` DISABLE KEYS */;
-INSERT INTO `공급자` VALUES (1,'pnu','홍길동','부곡로','it','it',-1171);
-/*!40000 ALTER TABLE `공급자` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `사원`
---
-
-DROP TABLE IF EXISTS `사원`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `사원` (
-  `사원번호` int NOT NULL,
-  `전화번호` int DEFAULT NULL,
-  `부서` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`사원번호`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `사원`
---
-
-LOCK TABLES `사원` WRITE;
-/*!40000 ALTER TABLE `사원` DISABLE KEYS */;
-INSERT INTO `사원` VALUES (1,-2282,'it부서');
-/*!40000 ALTER TABLE `사원` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2023-03-09 17:57:55
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
