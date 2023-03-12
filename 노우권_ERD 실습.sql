@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS `db0309`.`견적상세` (
   `견적번호` VARCHAR(45) NULL,
   `품명` VARCHAR(45) NULL,
   `상품_품명` INT NOT NULL,
-  PRIMARY KEY (`제품번호`, `상품.품명`),
-  INDEX `fk_견적상세_상품1_idx` (`상품_품명` ASC),
+  PRIMARY KEY (`제품번호`, `상품_품명`),
+  INDEX `fk_견적상세_상품1_idx` (`상품_품명` ASC) VISIBLE,
   CONSTRAINT `fk_견적상세_상품1`
     FOREIGN KEY (`상품_품명`)
     REFERENCES `db0309`.`상품` (`품명`)
@@ -58,10 +58,13 @@ CREATE TABLE IF NOT EXISTS `db0309`.`견적서` (
   `제품번호` VARCHAR(45) NULL,
   `공급가액` VARCHAR(45) NULL,
   `비고` VARCHAR(45) NULL,
-  PRIMARY KEY (`견적서번호`),
-  CONSTRAINT `fk_견적서_table41`
-    FOREIGN KEY (`견적서번호`)
-    REFERENCES `db0309`.`견적상세` (`견적번호`)
+  `견적상세_제품번호` INT NOT NULL,
+  `견적상세_상품_품명` INT NOT NULL,
+  PRIMARY KEY (`견적서번호`, `견적상세_제품번호`, `견적상세_상품_품명`),
+  INDEX `fk_견적서_견적상세1_idx` (`견적상세_제품번호` ASC, `견적상세_상품_품명` ASC) VISIBLE,
+  CONSTRAINT `fk_견적서_견적상세1`
+    FOREIGN KEY (`견적상세_제품번호` , `견적상세_상품_품명`)
+    REFERENCES `db0309`.`견적상세` (`제품번호` , `상품_품명`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -78,10 +81,12 @@ CREATE TABLE IF NOT EXISTS `db0309`.`공급자` (
   `업태` VARCHAR(45) NULL,
   `종목` VARCHAR(45) NULL,
   `전화번호` VARCHAR(45) NULL,
-  PRIMARY KEY (`등록번호`),
-  CONSTRAINT `fk_공급자_견적서`
-    FOREIGN KEY (`등록번호`)
-    REFERENCES `db0309`.`견적서` (`공급자번호`)
+  `견적서_견적서번호` INT NOT NULL,
+  PRIMARY KEY (`등록번호`, `견적서_견적서번호`),
+  INDEX `fk_공급자_견적서1_idx` (`견적서_견적서번호` ASC) VISIBLE,
+  CONSTRAINT `fk_공급자_견적서1`
+    FOREIGN KEY (`견적서_견적서번호`)
+    REFERENCES `db0309`.`견적서` (`견적서번호`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
